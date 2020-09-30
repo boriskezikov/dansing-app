@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -34,6 +35,14 @@ public class ExceptionHandlerInterceptor {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ErrorDTO handleApiException(Exception ex) {
         return new ErrorDTO(500, ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(value = {ResponseStatusException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    protected ErrorDTO handleApiException(ResponseStatusException ex) {
+        return new ErrorDTO(ex.getStatus().value(), ex.getMessage());
     }
 
 

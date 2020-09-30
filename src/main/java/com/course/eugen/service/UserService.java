@@ -45,14 +45,17 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public BigInteger createUser(@Validated CreateUserDTO createUserDTO) {
-        var user = User.builder()
-                .firstName(createUserDTO.getFirstName())
-                .lastName(createUserDTO.getLastName())
-                .mail(createUserDTO.getMail())
-                .password(createUserDTO.getPassword())
-                .globalRole(RolesEnum.PLAIN_USER)
-                .build();
-        return userRepository.save(user).getId();
+        if (!userRepository.existsByMailAndPassword(createUserDTO.getMail(),createUserDTO.getPassword())){
+            var user = User.builder()
+                    .firstName(createUserDTO.getFirstName())
+                    .lastName(createUserDTO.getLastName())
+                    .mail(createUserDTO.getMail())
+                    .password(createUserDTO.getPassword())
+                    .globalRole(RolesEnum.PLAIN_USER)
+                    .build();
+            return userRepository.save(user).getId();
+        }
+        throw new AppBusinessException("User already registered!");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
