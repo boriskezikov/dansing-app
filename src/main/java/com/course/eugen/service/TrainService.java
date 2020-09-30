@@ -2,11 +2,14 @@ package com.course.eugen.service;
 
 import com.course.eugen.config.AppBusinessException;
 import com.course.eugen.domain.Train;
+import com.course.eugen.domain.User;
 import com.course.eugen.domain.enums.RolesEnum;
 import com.course.eugen.dto.CreateTrainDTO;
+import com.course.eugen.dto.MarkUserDTO;
 import com.course.eugen.repository.GroupRepository;
 import com.course.eugen.repository.RoleModelRepository;
 import com.course.eugen.repository.TrainRepository;
+import com.course.eugen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.EntityNotFoundException;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,7 +35,28 @@ public class TrainService {
     private final TrainRepository trainRepository;
     private final GroupRepository groupRepository;
     private final RoleModelRepository roleModelRepository;
+    private final UserRepository userRepository;
 
+
+    public void markUser(MarkUserDTO markUserDTO) {
+        trainRepository.findById(markUserDTO.getTrainId()).ifPresentOrElse(train -> {
+            var marked = train.getMarkedUsers();
+            var user = userRepository.findById(markUserDTO.getUserId()).orElseThrow(EntityNotFoundException::new);
+            marked.add(user.getId().longValue());
+            trainRepository.save(train);
+            log.info("User {} has marked at the train {}", markUserDTO.getUserId(), markUserDTO.getTrainId());
+        }, () -> {
+            throw new EntityNotFoundException(format("Train with id %s not found!", markUserDTO.getTrainId()));
+        });
+    }
+
+    public List<User> getVisitors(BigInteger trainId) {
+        return trainRepository.findById(trainId).orElseThrow(EntityNotFoundException::new)
+                .getMarkedUsers().stream()
+                .map(BigInteger::valueOf)
+                .map(userId -> userRepository.findById(userId).orElseThrow(EntityNotFoundException::new))
+                .collect(Collectors.toList());
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Train createTraining(@Validated CreateTrainDTO createTrainDTO) {
