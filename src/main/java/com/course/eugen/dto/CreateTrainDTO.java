@@ -23,4 +23,6 @@ public class CreateTrainDTO {
 
     @NonNull
     private Timestamp beginTime;
+
+    private String name;
 }

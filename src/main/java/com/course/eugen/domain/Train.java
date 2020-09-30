@@ -43,6 +43,9 @@ public class Train {
     @ManyToOne(fetch = FetchType.EAGER)
     private Group group;
 
+    @Column
+    private String name;
+
     @CreationTimestamp
     private Timestamp created;
 

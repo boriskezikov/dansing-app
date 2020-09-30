@@ -78,6 +78,7 @@ public class TrainService {
                 var train = Train.builder()
                         .beginTime(createTrainDTO.getBeginTime())
                         .group(groupOpt.get())
+                        .name(createTrainDTO.getName())
                         .build();
                 return trainRepository.save(train);
             } else {
