@@ -1,6 +1,9 @@
 package com.course.eugen.service;
 
+import com.course.eugen.config.AppBusinessException;
+import com.course.eugen.domain.Group;
 import com.course.eugen.domain.RoleModel;
+import com.course.eugen.domain.Train;
 import com.course.eugen.domain.User;
 import com.course.eugen.domain.enums.RolesEnum;
 import com.course.eugen.dto.AssignUserToTrainDTO;
@@ -20,12 +23,16 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
+@SuppressWarnings("ALL")
 @Slf4j
 @Service(value = "UserService")
 @RequiredArgsConstructor
@@ -79,6 +86,7 @@ public class UserService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void assignUserToTrain(@Validated AssignUserToTrainDTO assignUserToTrainDTO) {
         trainRepository.findById(assignUserToTrainDTO.getTrainId()).ifPresentOrElse(train -> {
+            checkTrainingTime(train.getBeginTime());
             userRepository.findById(assignUserToTrainDTO.getUserId()).ifPresentOrElse(user -> {
                 var group = train.getGroup();
                 var students = group.getUsers();
@@ -128,4 +136,26 @@ public class UserService {
     }
 
 
+    public List<Train> getTrains(BigInteger userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            List<Group> userGroups = groupRepository.findAll().stream().filter(group -> group.getUsers().contains(user.get()))
+                    .collect(Collectors.toList());
+            List<Train> trains = trainRepository.findAll().stream().filter(train -> userGroups.contains(train.getGroup()))
+                    .collect(Collectors.toList());
+            return trains;
+        } else {
+            log.error("User with id {} not found in registry!", userId);
+            throw new EntityNotFoundException(format("User with id %s not found in registry!", userId));
+        }
+    }
+
+    private void checkTrainingTime(Timestamp trainBeginningTime) {
+        var now = LocalDateTime.now();
+        var local = trainBeginningTime.toLocalDateTime();
+        long diff = Duration.between(local, now).toMinutes();
+        if (diff > 45) {
+            throw new AppBusinessException("Unable to join training. Time between now and beginning is less then 45 minutes!");
+        }
+    }
 }

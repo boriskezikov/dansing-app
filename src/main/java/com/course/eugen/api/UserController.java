@@ -1,6 +1,6 @@
 package com.course.eugen.api;
 
-import com.course.eugen.domain.Group;
+import com.course.eugen.domain.Train;
 import com.course.eugen.dto.AssignUserToTrainDTO;
 import com.course.eugen.dto.ChangeUserRoleDTO;
 import com.course.eugen.dto.CreateUserDTO;
@@ -38,14 +38,19 @@ public class UserController {
         userService.changeRole(changeUserRoleDTO);
     }
 
-    @PostMapping("/assign/to/train")
+    @PostMapping("/join/to/train")
     @ResponseStatus(HttpStatus.OK)
-    public void assignToTrain(@RequestBody AssignUserToTrainDTO assignUserToTrainDTO) {
+    public void joinToTrain(@RequestBody AssignUserToTrainDTO assignUserToTrainDTO) {
         userService.assignUserToTrain(assignUserToTrainDTO);
     }
 
     @GetMapping("/{userId}/groups")
     public List<GroupDTO> loadGroups(@PathVariable BigInteger userId) {
         return userService.getGroups(userId);
+    }
+
+    @GetMapping("/{userId}/trains")
+    public List<Train> loadTrains(@PathVariable BigInteger userId) {
+        return userService.getTrains(userId);
     }
 }

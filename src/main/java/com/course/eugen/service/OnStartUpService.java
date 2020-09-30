@@ -1,9 +1,7 @@
 package com.course.eugen.service;
 
-import com.course.eugen.domain.RoleModel;
 import com.course.eugen.domain.User;
 import com.course.eugen.domain.enums.RolesEnum;
-import com.course.eugen.repository.RoleModelRepository;
 import com.course.eugen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

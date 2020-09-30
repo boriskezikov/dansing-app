@@ -1,10 +1,10 @@
 package com.course.eugen.dto;
 
-import com.course.eugen.domain.enums.RolesEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -13,12 +13,14 @@ import java.sql.Timestamp;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupDTO {
+public class CreateTrainDTO {
 
-    private BigInteger id;
-    private String name;
-    private BigInteger createdBy;
-    private Timestamp updated;
-    private RolesEnum role;
+    @NonNull
+    private BigInteger creatorId;
 
+    @NonNull
+    private BigInteger groupId;
+
+    @NonNull
+    private Timestamp beginTime;
 }

@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Data
 @EqualsAndHashCode(of = "id")
@@ -35,8 +35,8 @@ public class Train {
     private Group group;
 
     @CreationTimestamp
-    private LocalDateTime created;
+    private Timestamp created;
 
     @Column(nullable = false)
-    private LocalDateTime beginTime;
+    private Timestamp beginTime;
 }

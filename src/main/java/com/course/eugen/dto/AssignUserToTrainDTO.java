@@ -1,7 +1,6 @@
 package com.course.eugen.dto;
 
 
-import com.course.eugen.domain.RoleModel;
 import com.course.eugen.domain.enums.RolesEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
