@@ -42,7 +42,9 @@ public class TrainService {
         trainRepository.findById(markUserDTO.getTrainId()).ifPresentOrElse(train -> {
             var marked = train.getMarkedUsers();
             var user = userRepository.findById(markUserDTO.getUserId()).orElseThrow(EntityNotFoundException::new);
-            marked.add(user.getId().longValue());
+            if (!marked.contains(user.getId().longValue())) {
+                marked.add(user.getId().longValue());
+            }
             trainRepository.save(train);
             log.info("User {} has marked at the train {}", markUserDTO.getUserId(), markUserDTO.getTrainId());
         }, () -> {
@@ -54,6 +56,7 @@ public class TrainService {
         return trainRepository.findById(trainId).orElseThrow(EntityNotFoundException::new)
                 .getMarkedUsers().stream()
                 .map(BigInteger::valueOf)
+                .distinct()
                 .map(userId -> userRepository.findById(userId).orElseThrow(EntityNotFoundException::new))
                 .collect(Collectors.toList());
     }
