@@ -127,6 +127,7 @@ public class UserService {
                             .createdBy(group.getCreatedBy())
                             .updated(group.getUpdated())
                             .role(roleOpt.get().getRole())
+                            .membersCount(group.getUsers().size())
                             .build();
                 } else {
                     throw new EntityNotFoundException(

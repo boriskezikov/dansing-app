@@ -20,5 +20,6 @@ public class GroupDTO {
     private BigInteger createdBy;
     private Timestamp updated;
     private RolesEnum role;
+    private Integer membersCount;
 
 }
