@@ -1,4 +1,4 @@
-package com.course.eugen.api;
+package com.course.eugen.controller;
 
 
 import com.course.eugen.dto.LoginDTO;
